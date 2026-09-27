@@ -41142,6 +41142,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EscapeMenu
   toggleKey: 27
   pauseGameWhenOpen: 1
+  showStartupAnimation: 1
+  startupAnimationDuration: 2.8
+  startupLogo: {fileID: 21300000, guid: 99ccc19373c360f45bb8ba1ff39338ad, type: 3}
+  startupTitle: "\u6841\u67B6\u6570\u5B57\u5B6A\u751F\u7CFB\u7EDF"
+  startupSubtitle: TRUSS DIGITAL TWIN  /  STRUCTURAL RESPONSE WORKSPACE
+  showHudOnStart: 1
+  darkenWorldBackground: 1
+  worldBackground: {r: 0.024, g: 0.075, b: 0.129, a: 1}
 --- !u!4 &1088682948
 Transform:
   m_ObjectHideFlags: 0
