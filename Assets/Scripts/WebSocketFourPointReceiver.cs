@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -49,10 +50,44 @@ public class WebSocketFourPointReceiver : MonoBehaviour
     private readonly ConcurrentQueue<string> pendingMessages =
         new ConcurrentQueue<string>();
 
+    private readonly Dictionary<string, float> elementLastUpdateRealtime =
+        new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
+
     private ClientWebSocket socket;
     private CancellationTokenSource cancellation;
     private Task receiveTask;
     private bool stopping;
+
+    public long LastPacketTimestamp { get; private set; }
+
+    public float LastUpdateRealtime { get; private set; } = -1f;
+
+    public bool IsConnected
+    {
+        get
+        {
+            return socket != null &&
+                   socket.State == WebSocketState.Open;
+        }
+    }
+
+    public string ServerUrl
+    {
+        get { return serverUrl; }
+    }
+
+    public bool TryGetElementLastUpdate(
+        string elementId,
+        out float realtime)
+    {
+        if (string.IsNullOrWhiteSpace(elementId))
+        {
+            realtime = -1f;
+            return false;
+        }
+
+        return elementLastUpdateRealtime.TryGetValue(elementId, out realtime);
+    }
 
     private void Start()
     {
@@ -187,6 +222,9 @@ public class WebSocketFourPointReceiver : MonoBehaviour
             return;
         }
 
+        LastPacketTimestamp = packet.timestamp;
+        LastUpdateRealtime = Time.realtimeSinceStartup;
+
         foreach (FourPointStrainItem item in packet.elements)
         {
             if (item == null || string.IsNullOrWhiteSpace(item.elementId))
@@ -200,6 +238,8 @@ public class WebSocketFourPointReceiver : MonoBehaviour
                 item.strainP2,
                 item.strainP3,
                 item.strainP4);
+            elementLastUpdateRealtime[item.elementId] =
+                Time.realtimeSinceStartup;
         }
     }
 

@@ -40,6 +40,56 @@ public class FourPointBeamElementVisual : MonoBehaviour
     private Color endP3Color;
     private Color endP4Color;
 
+    public float SectionWidth
+    {
+        get
+        {
+            EnsureRuntimeReferences();
+            return sectionWidth;
+        }
+    }
+
+    public float SectionHeight
+    {
+        get
+        {
+            EnsureRuntimeReferences();
+            return sectionHeight;
+        }
+    }
+
+    public float ElementLength
+    {
+        get { return Vector3.Distance(startPosition, endPosition); }
+    }
+
+    public float MinimumStrain
+    {
+        get { return Mathf.Min(strainP1, strainP2, strainP3, strainP4); }
+    }
+
+    public float MaximumStrain
+    {
+        get { return Mathf.Max(strainP1, strainP2, strainP3, strainP4); }
+    }
+
+    public float AverageStrain
+    {
+        get { return (strainP1 + strainP2 + strainP3 + strainP4) * 0.25f; }
+    }
+
+    public float PeakAbsoluteStrain
+    {
+        get
+        {
+            return Mathf.Max(
+                Mathf.Abs(strainP1),
+                Mathf.Abs(strainP2),
+                Mathf.Abs(strainP3),
+                Mathf.Abs(strainP4));
+        }
+    }
+
     private void Awake()
     {
         EnsureRuntimeReferences();

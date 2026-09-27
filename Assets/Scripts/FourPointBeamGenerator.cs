@@ -146,6 +146,16 @@ public class FourPointBeamGenerator : MonoBehaviour
         UnityEngine.Debug.Log(
             "Generated " + total + " four-point beam elements and " +
             jointCount + " interpolated joint blocks.");
+
+        if (UnityEngine.Application.isPlaying)
+        {
+            FourPointStressController controller =
+                FindFirstObjectByType<FourPointStressController>();
+            if (controller != null)
+            {
+                controller.RefreshElements();
+            }
+        }
     }
 
     private int GenerateBeam(BeamDefinition beam)
@@ -180,6 +190,7 @@ public class FourPointBeamGenerator : MonoBehaviour
 
             GameObject element = new GameObject(elementId);
             element.transform.SetParent(outputRoot, true);
+            element.layer = outputRoot.gameObject.layer;
             element.transform.position = (elementStart + elementEnd) * 0.5f;
             element.transform.rotation = Quaternion.FromToRotation(
                 Vector3.up, (elementEnd - elementStart).normalized);
@@ -208,6 +219,14 @@ public class FourPointBeamGenerator : MonoBehaviour
                 width,
                 height,
                 maxAbsoluteStrain);
+
+            BoxCollider collider = element.AddComponent<BoxCollider>();
+            collider.center = filter.sharedMesh != null
+                ? filter.sharedMesh.bounds.center
+                : Vector3.zero;
+            collider.size = filter.sharedMesh != null
+                ? filter.sharedMesh.bounds.size
+                : new Vector3(width, 1f, height);
 
             // Initialize() creates and assigns the mesh. Keep the component
             // reference explicit so missing MeshFilter errors are obvious.
@@ -331,6 +350,7 @@ public class FourPointBeamGenerator : MonoBehaviour
                              generatedJointCount.ToString("D3");
             GameObject joint = new GameObject(jointId);
             joint.transform.SetParent(outputRoot, true);
+            joint.layer = outputRoot.gameObject.layer;
             joint.transform.position = cluster.Center;
             joint.transform.rotation = Quaternion.identity;
             joint.transform.localScale = Vector3.one;
@@ -383,6 +403,7 @@ public class FourPointBeamGenerator : MonoBehaviour
             {
                 if (UnityEngine.Application.isPlaying)
                 {
+                    child.SetParent(null, true);
                     Destroy(child.gameObject);
                 }
                 else

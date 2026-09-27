@@ -248,6 +248,15 @@ public class TrussCameraController : MonoBehaviour
             Vector3.up);
     }
 
+    /// <summary>
+    /// Public entry point used by the runtime HUD and Escape menu.
+    /// </summary>
+    public void FocusModel()
+    {
+        FocusTarget();
+        UpdateCameraTransform();
+    }
+
     private void FocusTarget()
     {
         if (target == null)

@@ -105,6 +105,49 @@ public class FourPointStressController : MonoBehaviour
                elements.ContainsKey(elementId);
     }
 
+    public bool TryGetElement(
+        string elementId,
+        out FourPointBeamElementVisual visual)
+    {
+        if (string.IsNullOrWhiteSpace(elementId))
+        {
+            visual = null;
+            return false;
+        }
+
+        return elements.TryGetValue(elementId, out visual);
+    }
+
+    public List<FourPointBeamElementVisual> GetElementsForBeam(string beamId)
+    {
+        List<FourPointBeamElementVisual> result =
+            new List<FourPointBeamElementVisual>();
+
+        if (string.IsNullOrWhiteSpace(beamId))
+        {
+            return result;
+        }
+
+        foreach (FourPointBeamElementVisual element in elements.Values)
+        {
+            if (element != null &&
+                string.Equals(
+                    element.beamId,
+                    beamId,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                result.Add(element);
+            }
+        }
+
+        result.Sort((left, right) =>
+            string.Compare(
+                left.elementId,
+                right.elementId,
+                StringComparison.OrdinalIgnoreCase));
+        return result;
+    }
+
     public void SetElementCornerStrains(
         string elementId,
         float p1,
